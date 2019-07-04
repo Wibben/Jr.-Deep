@@ -1,23 +1,24 @@
 //Pins used on Arduino
-int keyPins[] = {2, 3, 4, 5, 6, 7, 8, 9}; //piano key pins
+int keyPins[] = {2, 3, 4, 5, 6}; // Morse message pins
+int passwordPins[] = {A0, A1, A2, A3, A4, A5}; // Pins for password input
 int speakerPin = 10; //pins
-int numPins = 8; //number of pins to make array iteration easier
+int enterPin = 7,redPin = 12, greenPin = 13; // LED pins
+int numPins = 5; //number of pins to make array iteration easier
 
 //Notes/Tones constants
-//char notes[] = "cdefgabC "; //notes available on the piano
 int MorseUnit = 300; // Number of milliseconds for one unit
-int tones[] = { 1915, 1700, 1519, 1432, 1275, 1136, 1014, 956 }; //frequencies that correspond with the notes
+int tones[] = { 1915, 1700, 1519, 1432, 1275, 1136, 1014, 956 }; // frequencies that correspond with the notes cdefgabC
 char *alphabet[26] = { // Holds the morse code for the alphabet (A-Z)
-  ".-", "-...", "-.-.", "-..", ".",     // ABCDE
-  "..-.", "--.", "....", "..", ".---",  // FGHIJ
-  "-.-", ".-..", "--", "-.", "---",   // KLMNO
-  ".--.", "--.-", ".-.", "...", "-",   // PQRST
-  "..-", "...-", ".--", "-..-", "-.--", "--.."  // UVWXYZ
+  ".-",   "-...", "-.-.", "-..",  ".",            // ABCDE
+  "..-.", "--.",  "....", "..",   ".---",         // FGHIJ
+  "-.-",  ".-..", "--",   "-.",   "---",          // KLMNO
+  ".--.", "--.-", ".-.",  "...",  "-",            // PQRST
+  "..-",  "...-", ".--",  "-..-", "-.--", "--.."  // UVWXYZ
 };
 char *numeral[10] = { // Holds the morse code for the numberals (0-9)
-  "-----", ".----", "..---",
-  "...--", "....-", ".....",
-  "-....", "--...", "---..", "----."
+  "-----", ".----", "..---",                    // 012
+  "...--", "....-", ".....",                    // 345
+  "-....", "--...", "---..", "----."            // 6789
 };
 
 // Messages to play
@@ -28,6 +29,10 @@ String message[5] = {
   "IS BING",
   "DONE"
 };
+
+// Passowrd: 24 -> 011000
+int password[6] = {0,1,1,0,0,0};
+int inputPassword[6];
 
 //Serial Output
 bool serialOn = true;
@@ -89,18 +94,53 @@ void setup()
   //initialize pins
   for (int i = 0 ; i < numPins ; i++)
     pinMode(keyPins[i], INPUT);
+  for(int i=0; i<6; i++)
+    pinMode(passwordPins[i], INPUT);
   pinMode(speakerPin, OUTPUT);
-
+  pinMode(enterPin, INPUT);
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  
   if (serialOn) Serial.begin(9600);
 }
 
 void loop() 
 {
-  //Play recorded message based on button pressed
-  for (int i = 0 ; i < 5; i++) {
-    if(digitalRead(keyPins[i])==LOW){ //if the current pin button is being pressed
+  // Morse code circuit
+  // Play recorded message based on button pressed
+  for (int i = 0 ; i < numPins; i++) {
+    if(digitalRead(keyPins[i]) == LOW){ //if the current pin button is being pressed
+      Serial.print("GROUP");
+      Serial.println(i+1);
       playMessage(i);
+      
+      // End of message tone
+      delay(5*MorseUnit);
+      playTone(tones[0],2000);
     }
+  }
+
+  // Password circuit
+  if(digitalRead(enterPin) == LOW) {
+    // Read password
+    for(int i=0; i<6; i++) {
+      inputPassword[i] = digitalRead(passwordPins[i]);
+    }
+
+    // Check password
+    bool correct = true;
+    for(int i=0; i<6; i++) {
+      if(inputPassword[i]!=password[i]) correct = false;
+    }
+
+    // Display correct output for 1 second, and ten turn it off
+    if(correct) digitalWrite(greenPin, HIGH);
+    else digitalWrite(redPin, HIGH);
+    
+    delay(1000);
+    
+    digitalWrite(redPin, LOW);
+    digitalWrite(greenPin, LOW);
   }
 }
 
