@@ -5,14 +5,14 @@ int numPins = 8; //number of pins to make array iteration easier
 
 //Notes/Tones constants
 //char notes[] = "cdefgabC "; //notes available on the piano
-int MorseUnit = 200; // Number of milliseconds for one unit
+int MorseUnit = 300; // Number of milliseconds for one unit
 int tones[] = { 1915, 1700, 1519, 1432, 1275, 1136, 1014, 956 }; //frequencies that correspond with the notes
 char *alphabet[26] = { // Holds the morse code for the alphabet (A-Z)
-  "", "", "", "", ".", 
-  "", "", "", "", "", 
-  "", "", "", "", "", 
-  "", "", "", "", "", 
-  "", "", "", "", "", ""
+  ".-", "-...", "-.-.", "-..", ".",     // ABCDE
+  "..-.", "--.", "....", "..", ".---",  // FGHIJ
+  "-.-", ".-..", "--", "-.", "---",   // KLMNO
+  ".--.", "--.-", ".-.", "...", "-",   // PQRST
+  "..-", "...-", ".--", "-..-", "-.--", "--.."  // UVWXYZ
 };
 char *numeral[10] = { // Holds the morse code for the numberals (0-9)
   "-----", ".----", "..---",
@@ -22,11 +22,11 @@ char *numeral[10] = { // Holds the morse code for the numberals (0-9)
 
 // Messages to play
 String message[5] = {
-  "E",
-  "E",
-  "E",
-  "E",
-  "E"
+  "HELLO",
+  "THERE",
+  "MY NAME",
+  "IS BING",
+  "DONE"
 };
 
 //Serial Output
@@ -46,7 +46,6 @@ void playTone(int tone, int duration)
 // Plays the morse for a character
 void playMorse(char character)
 {
-  Serial.println(character);
   // Figure out if it's a letter or number and play from the right array
   String morse;
   if(character>='A' && character<='Z') {
@@ -72,10 +71,10 @@ void playMessage(int messageID)
   for(int i=0; i<message[messageID].length(); i++) {
     // If it's a space, wait 7 units, otherwise
     // Play the morse code of the corresponding letter/number and then wait 3 units
-    if(message[messageID][i]==' ') delay(4*MorseUnit); // Only 4 units since there is already 3 units from the previous letter
+    if(message[messageID][i]==' ') delay(5*MorseUnit); // Only 4 units since there is already 3 units from the previous letter
     else {
       playMorse(message[messageID][i]);
-      delay(2*MorseUnit); // Only 2 units since there is already 1 unit from the end of the morse tone itself
+      delay(3*MorseUnit); // Only 2 units since there is already 1 unit from the end of the morse tone itself
     }
   }
 }
@@ -99,9 +98,7 @@ void loop()
 {
   //Play recorded message based on button pressed
   for (int i = 0 ; i < 5; i++) {
-    if(digitalRead(keyPins[i])==LOW){
-    //if (readBtn(keyPins[i]) == HIGH) { //if the current pin button is being pressed
-      Serial.println(keyPins[i]);
+    if(digitalRead(keyPins[i])==LOW){ //if the current pin button is being pressed
       playMessage(i);
     }
   }
