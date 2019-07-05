@@ -23,11 +23,11 @@ char *numeral[10] = { // Holds the morse code for the numberals (0-9)
 
 // Messages to play
 String message[5] = {
-  "HELLO",
-  "THERE",
-  "MY NAME",
-  "IS BING",
-  "DONE"
+  "HELLO GROUP ONE, YOU WILL NEED THE FOLLOWING INFORMATION FOR A LATER PUZZLE, SO PAY ATTENTION, ROW 2 COL 1, ROW 4 COL 3, ROW 6 COL 5, ROW 7 COL 5, ROW 8 COL 9",
+  "HI GROUP TWO, YOUR MESSAGE IS VERY IMPORTANT AND YOU NEED IT TO SOLVE ONE OF THE LAST PUZZLES, ROW 1 COL 8, ROW 2 COL 3, ROW 5 COL 9, ROW 7 COL 6, ROW 8 COL 4",
+  "WELCOME GROUP THREE, TO HELP YOU REACH THE END, WE HAVE FOUND SOME INFORMATION FOR YOU, ROW 1 COL 3, ROW 1 COL 6, ROW 4 COL 1, ROW 4 COL 7, ROW 5 COL 8",
+  "HOWDY GROUP FOUR, TO AID YOU IN YOUR QUEST, YOU WILL NEED TO TAKE NOTE OF WHAT YOU ARE ABOUT TO READ, ROW 3 COL 7, ROW 5 COL 4, ROW 6 COL 5, ROW 7 COL 6, ROW 8 COL 7",
+  "HEY THERE GROUP FIVE, IN ORDER FOR YOU TO FINISH ALL THE PUZZLES, YOU WILL NEED TO USE THIS INFORMATION, ROW 1 COL 2, ROW 2 COL 4, ROW 4 COL 5, ROW 6 COL 6, ROW 7 COL 7"
 };
 
 // Passowrd: 24 -> 011000
@@ -52,10 +52,13 @@ void playTone(int tone, int duration)
 void playMorse(char character)
 {
   // Figure out if it's a letter or number and play from the right array
-  String morse;
+  // Do othing if the character is not a letter or a number
+  String morse = "";
   if(character>='A' && character<='Z') {
     morse = alphabet[character-'A'];
-  } else morse = numeral[character-'0'];
+  } else if(character>='0' && character<='9') {
+    morse = numeral[character-'0'];
+  }
 
   for(int i=0; i<morse.length(); i++) {
     if(morse[i]=='.') playTone(tones[3],MorseUnit);
