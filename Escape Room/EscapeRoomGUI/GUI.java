@@ -1,8 +1,7 @@
-// This class is the entire GUI for the one bit camera
-/* Bing Li
- * SPH4U0
- * One Bit Camera
- */
+// The GUI for the escape room
+// Will contain instructions and a final screen indicating whether the password
+// has been successfully entered
+
 import java.awt.*;
 import javax.swing.*;
 import java.awt.geom.*; // Rotating text
@@ -67,6 +66,13 @@ class GUI extends JFrame
         setLocationRelativeTo(null);// Center window
     }
     
+    // Receives whether the password is correct or incorrect
+    public void sendPass(boolean isCorrect)
+    {
+        // Only do something if the information is sent over during the last puzzle
+        if(step==6) board.updatePassword(isCorrect);
+    }
+    
     class BtnListener implements ActionListener 
     {
         public void actionPerformed(ActionEvent e)
@@ -114,14 +120,33 @@ class GUI extends JFrame
             g2d.setColor(new Color(100,100,100));
             g2d.drawRect(0,0,601,601);
             
-            g2d.setColor(new Color(255,255,255));
+            g2d.setColor(new Color(0,0,0));
             g2d.fillRect(1,1,600,600);
             
-            g2d.setColor(new Color(0,0,0));
+            g2d.setColor(new Color(200,200,200));
             Font font = new Font("Serif", Font.PLAIN, 96);
             g2d.setFont(font);
-        
             g2d.drawString(""+step, 250, 300);
+            
+            repaint();
+        }
+        
+        public void updatePassword(boolean isCorrect)
+        {
+            updateAll();
+            
+            // Set Font
+            Font font = new Font("Courier New", Font.PLAIN, 72);
+            g2d.setFont(font);
+            
+            // Display whether password for puzzle 6 is correct
+            if(isCorrect) {
+                g2d.setColor(new Color(0,255,0));
+                g2d.drawString("CORRECT", 100, 400);
+            } else {
+                g2d.setColor(new Color(255,0,0));
+                g2d.drawString("INCORRECT", 100, 400);
+            }
             
             repaint();
         }

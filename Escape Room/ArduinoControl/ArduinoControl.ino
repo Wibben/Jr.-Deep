@@ -134,8 +134,13 @@ void loop()
     }
 
     // Display correct output for 1 second, and ten turn it off
-    if(correct) digitalWrite(greenPin, HIGH);
-    else digitalWrite(redPin, HIGH);
+    if(correct) {
+      digitalWrite(greenPin, HIGH);
+      Serial.println("y");
+    } else {
+      digitalWrite(redPin, HIGH);
+      Serial.println("n");
+    }
     
     delay(1000);
     
