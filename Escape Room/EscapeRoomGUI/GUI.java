@@ -20,13 +20,12 @@ class GUI extends JFrame
     private DrawArea board; // Main display area
     private JButton nextBtn,prevBtn; // Buttons
 
-    private static final int maxPuzzles = 6; // Number of puzzles in total
-    private int step; // Keeps track of which step it is in currently
+    private Puzzle step; // Keeps track of which step it is in currently
     
     public GUI(Arduino ard)
     {
         // Initialize components
-        step = 1;
+        step = Puzzle.START;
         main = ard;
         BtnListener btnListener = new BtnListener(); // listener for all buttons
         
@@ -70,7 +69,7 @@ class GUI extends JFrame
     public void sendPass(boolean isCorrect)
     {
         // Only do something if the information is sent over during the last puzzle
-        if(step==6) board.updatePassword(isCorrect);
+        if(step==Puzzle.CIRCUIT) board.updatePassword(isCorrect);
     }
     
     class BtnListener implements ActionListener 
@@ -78,24 +77,24 @@ class GUI extends JFrame
         public void actionPerformed(ActionEvent e)
         {
             if(e.getActionCommand().equals("Next Step")) {
-                step++; // Increment step
+                step = step.next(); // Increment step
                 
                 // Update everything
                 board.updateAll();
                 repaint();
                 
                 // Do not let the user go to the "next step" if they are now at the final puzzle
-                if(step == maxPuzzles) nextBtn.setEnabled(false);
+                if(step == Puzzle.CIRCUIT) nextBtn.setEnabled(false);
                 prevBtn.setEnabled(true); // DO allow the user to go back
             } else if(e.getActionCommand().equals("Prev Step")) {
-                step--; // Decrement step
+                step = step.prev(); // Decrement step
                 
                 // Update everything
                 board.updateAll();
                 repaint();
                 
                 // Do not let the user go to the "previous step" if they are now at the first puzzle
-                if(step == 1) prevBtn.setEnabled(false);
+                if(step == Puzzle.START) prevBtn.setEnabled(false);
                 nextBtn.setEnabled(true); // DO allow the user to go forward
             }
         }
@@ -118,14 +117,16 @@ class GUI extends JFrame
         {
             // Border
             g2d.setColor(new Color(100,100,100));
-            g2d.drawRect(0,0,601,601);
+            g2d.fillRect(0,0,601,601);
             
             g2d.setColor(new Color(0,0,0));
             g2d.fillRect(1,1,600,600);
             
-            g2d.setColor(new Color(200,200,200));
-            Font font = new Font("Serif", Font.PLAIN, 96);
+            // Set Font
+            g2d.setColor(new Color(0,255,0));
+            Font font = new Font("Courier New", Font.PLAIN, 24); // 43 Characters per line
             g2d.setFont(font);
+            g2d.drawString("12345678901234567890123456789012345678901234567890",0,20);
             g2d.drawString(""+step, 250, 300);
             
             repaint();
