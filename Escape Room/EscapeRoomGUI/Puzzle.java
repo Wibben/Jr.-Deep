@@ -12,7 +12,8 @@ public enum Puzzle
     SUDOKU,
     JIGSAW,
     CIRCUIT,
-    WIN;
+    WIN,
+    SIZE;
     
     private static Puzzle vals[] = values();
     
@@ -26,5 +27,11 @@ public enum Puzzle
     public Puzzle prev()
     {
         return vals[(this.ordinal()+vals.length-1) % vals.length]; // Prevent modulo of a negative number
+    }
+    
+    // Getter for ordinal/value of enum
+    public int getValue()
+    {
+        return this.ordinal();
     }
 }

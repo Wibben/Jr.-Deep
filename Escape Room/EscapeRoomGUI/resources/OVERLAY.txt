@@ -1,0 +1,16 @@
+123456789012345678901234567890123456789012
+TASK I: HIDDEN CLUES
+
+Welcome Grade 3/4 Spy Academy,
+  You have completed a week of intense spy 
+  training, and you are almost ready to 
+  take on the world. But first, we need to
+  look at and evaluate the results of your 
+  training.
+  
+  Your first task is to find the hidden 
+  clues scattered around the room to open 
+  the first box. Figuring out how to get
+  the code for the lock is up to you. 
+  
+  Good Luck!
