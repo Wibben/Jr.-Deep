@@ -13,6 +13,7 @@ import javax.swing.border.*;
 import javax.swing.Timer;
 import javax.imageio.*; // Allows exporting to a png
 import java.io.*; // File I/O
+import java.util.ArrayList;
 
 class GUI extends JFrame
 {
@@ -24,9 +25,10 @@ class GUI extends JFrame
 
     private Puzzle step; // Keeps track of which step it is in currently
     private boolean visited[];
+    private ArrayList<String> currentInstructions;
     
-    
-    private Timer timer;
+    private Timer t;
+    private int instructionRow,instructionCol;
     
     public GUI(Arduino ard)
     {
@@ -80,8 +82,11 @@ class GUI extends JFrame
     }
     
     // Returns the right txt file for the current step
-    public File findInstructionFile()
+    public void readInstructionFile()
     {
+        // Start a new ArrayList
+        currentInstructions = new ArrayList<String>();
+        
         // Open the right instructions file
         try {
             // Figure out which file to open
@@ -112,12 +117,23 @@ class GUI extends JFrame
             
             // Send file to an input stream
             File file = new File(filePath);
-            return file;
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            
+            // Read the input into current instructions
+            String input = bufferedReader.readLine();
+            while(input != null) {
+                currentInstructions.add(input);
+                input = bufferedReader.readLine();
+            }
+            
+            fileReader.close(); // Close the file
         } catch(Exception e) { // If it does not exist, output error message in dialog box
             JOptionPane.showMessageDialog(null, "File Does Not Exist","Error:",JOptionPane.ERROR_MESSAGE);
         }
         
-        return null;
+        instructionRow = currentInstructions.size()-1;
+        instructionCol = currentInstructions.get(instructionRow).length()-1;
     }
     
     class BtnListener implements ActionListener 
@@ -136,54 +152,32 @@ class GUI extends JFrame
                     } else {
                         JOptionPane.showMessageDialog(f, "Code Word Incorrect\nYou may not proceed","Access Denied",JOptionPane.ERROR_MESSAGE);
                     }
-                    
-                    
                 } else step = step.next(); // Increment step
                 
                 // Update everything
-                board.updateBG();
-                // Open the right instructions file
-                try {
-                    FileReader fileReader = new FileReader(findInstructionFile());
-                    BufferedReader bufferedReader = new BufferedReader(fileReader);
-                
-                    int line = 0;
-                    String input = bufferedReader.readLine();
-                    while(input != null) {
-                        // Print the line letter by letter
-                        int letter=0;
-                        timer = new Timer(50, new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                String str = input;
-                                if(letter < input.length()){
-                                    board.putChar(input,line,letter++);
-                                } else {
-                                    timer.stop();
-                                    System.out.println("done");
-                                }
+                readInstructionFile();
+                // If first time draw letters one by one
+                if(!visited[step.getValue()]) {
+                    instructionRow=0;
+                    instructionCol=0;
+                    
+                    // Start a swing timer to draw the letters
+                    t = new Timer(40, new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            board.updateAll();
+                            instructionCol++;
+                            if(instructionCol>=currentInstructions.get(instructionRow).length()) {
+                                instructionCol = 0;
+                                instructionRow++;
                             }
-                        });
-                        timer.start();
-                        /*
-                        for(int i=0; i<input.length(); i++) {
-                            board.putChar(input,line,i);
-                            System.out.println(step.getValue());
-                            // Output the entire file to the screen letter by letter if its the first time
-                            if(!visited[step.getValue()]) Thread.sleep(50);
-                        }*/
-    
-                        // Increment line count and read the next line
-                        line++;
-                        input = bufferedReader.readLine();
-                    }
+                            if(instructionRow>=currentInstructions.size()) t.stop();
+                        }
+                    });
+                    t.start();
                     
-                    // Set visited flag to true
                     visited[step.getValue()] = true;
-                    
-                    fileReader.close(); // Close the file
-                } catch(Exception exc) { // If it does not exist, output error message in dialog box
-                    JOptionPane.showMessageDialog(null, "File Does Not Exist","Error:",JOptionPane.ERROR_MESSAGE);
+                } else {
+                    board.updateAll();
                 }
                 
                 repaint();
@@ -195,29 +189,8 @@ class GUI extends JFrame
                 step = step.prev(); // Decrement step
                 
                 // Update everything
-                board.updateBG();
-                // Open the right instructions file
-                try {
-                    FileReader fileReader = new FileReader(findInstructionFile());
-                    BufferedReader bufferedReader = new BufferedReader(fileReader);
-                
-                    int line = 0;
-                    String input = bufferedReader.readLine();
-                    while(input != null) {
-                        // Print the line letter by letter
-                        for(int i=0; i<input.length(); i++) {
-                            board.putChar(input,line,i);
-                        }
-    
-                        // Increment line count and read the next line
-                        line++;
-                        input = bufferedReader.readLine();
-                    }
-                    
-                    fileReader.close(); // Close the file
-                } catch(Exception exc) { // If it does not exist, output error message in dialog box
-                    JOptionPane.showMessageDialog(null, "File Does Not Exist","Error:",JOptionPane.ERROR_MESSAGE);
-                }
+                readInstructionFile();
+                board.updateAll();
                 
                 repaint();
                 
@@ -228,8 +201,7 @@ class GUI extends JFrame
         }
     }
     
-    // Main image that is being scanned
-    // For 300 x 300 image, each "pixel" is a 2x2 rectangle
+    // Main display
     class DrawArea extends JPanel
     {
         private BufferedImage img = new BufferedImage(602 ,602, BufferedImage.TYPE_INT_ARGB);
@@ -238,10 +210,12 @@ class GUI extends JFrame
         public DrawArea(int width, int height)
         {
             this.setPreferredSize(new Dimension(width,height)); // size
-            updateBG();
+            readInstructionFile();
+            
+            updateAll();
         }
         
-        public void updateBG()
+        public void updateAll()
         {
             // Border
             g2d.setColor(new Color(100,100,100));
@@ -253,12 +227,25 @@ class GUI extends JFrame
             //g2d.drawString("12345678901234567890123456789012345678901234567890",0,20);
             //g2d.drawString(""+step, 250, 300);
             
+            // Set Font and get font metrics
+            g2d.setColor(new Color(0,255,0));
+            Font font = new Font("Courier New", Font.PLAIN, 24); // 43 Characters per line
+            g2d.setFont(font);
+            FontMetrics metrics = g2d.getFontMetrics(font);
+            int fontHeight = metrics.getHeight(); // Font height
+            
+            // Draw the text up to the current instruction row and col
+            for(int i=0; i<instructionRow; i++) {
+                g2d.drawString(currentInstructions.get(i),7,20+i*fontHeight); // Draw each row of text
+            }
+            g2d.drawString(currentInstructions.get(instructionRow).substring(0,instructionCol),7,20+instructionRow*fontHeight); // Draw the last row up to the current col
+            
             repaint();
         }
         
         public void updatePassword(boolean isCorrect)
         {
-            updateBG();
+            updateAll();
             
             // Set Font
             Font font = new Font("Courier New", Font.PLAIN, 72);
@@ -274,20 +261,6 @@ class GUI extends JFrame
                 g2d.drawString("INCORRECT", 100, 400);
             }
             
-            repaint();
-        }
-        
-        public void putChar(String input, int line, int i)
-        {
-            // Set Font and get font metrics
-            g2d.setColor(new Color(0,255,0));
-            Font font = new Font("Courier New", Font.PLAIN, 24); // 43 Characters per line
-            g2d.setFont(font);
-            FontMetrics metrics = g2d.getFontMetrics(font);
-            int fontHeight = metrics.getHeight(); // Font height
-            int fontAdvance = metrics.stringWidth(input.substring(0,i));
-            
-            g2d.drawString(""+input.charAt(i),7+fontAdvance,20+line*fontHeight); // Draw the character at the specified position
             repaint();
         }
 
