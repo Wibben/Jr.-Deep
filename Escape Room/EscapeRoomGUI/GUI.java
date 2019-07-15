@@ -99,16 +99,22 @@ class GUI extends JFrame
                     filePath += "OVERLAY.txt";
                     break;
                 case INK:
+                filePath += "START.txt";
                     break;
                 case LIES:
+                filePath += "START.txt";
                     break;
                 case MORSE:
+                filePath += "START.txt";
                     break;
                 case SUDOKU:
+                filePath += "START.txt";
                     break;
                 case JIGSAW:
+                filePath += "START.txt";
                     break;
                 case CIRCUIT:
+                filePath += "START.txt";
                     break;
                 case WIN:
                     break;
@@ -133,7 +139,7 @@ class GUI extends JFrame
         }
         
         instructionRow = currentInstructions.size()-1;
-        instructionCol = currentInstructions.get(instructionRow).length()-1;
+        instructionCol = currentInstructions.get(instructionRow).length();
     }
     
     class BtnListener implements ActionListener 
@@ -164,13 +170,14 @@ class GUI extends JFrame
                     // Start a swing timer to draw the letters
                     t = new Timer(40, new ActionListener() {
                         public void actionPerformed(ActionEvent evt) {
-                            board.updateAll();
-                            instructionCol++;
-                            if(instructionCol>=currentInstructions.get(instructionRow).length()) {
-                                instructionCol = 0;
-                                instructionRow++;
-                            }
-                            if(instructionRow>=currentInstructions.size()) t.stop();
+                            if(instructionRow<currentInstructions.size()) {
+                                board.updateAll();
+                                instructionCol++;
+                                if(instructionCol>currentInstructions.get(instructionRow).length()) {
+                                    instructionCol = 0;
+                                    instructionRow++;
+                                }
+                            } else t.stop();
                         }
                     });
                     t.start();
@@ -211,7 +218,6 @@ class GUI extends JFrame
         {
             this.setPreferredSize(new Dimension(width,height)); // size
             readInstructionFile();
-            
             updateAll();
         }
         
@@ -221,11 +227,9 @@ class GUI extends JFrame
             g2d.setColor(new Color(100,100,100));
             g2d.fillRect(0,0,601,601);
             
+            // Background
             g2d.setColor(new Color(0,0,0));
             g2d.fillRect(1,1,600,600);
-            
-            //g2d.drawString("12345678901234567890123456789012345678901234567890",0,20);
-            //g2d.drawString(""+step, 250, 300);
             
             // Set Font and get font metrics
             g2d.setColor(new Color(0,255,0));
