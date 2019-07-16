@@ -25,6 +25,7 @@ class GUI extends JFrame
 
     private Puzzle step; // Keeps track of which step it is in currently
     private boolean visited[];
+    private int correctPassword; // Checks if the password is correct (1), incorrect (-1), or indeterminate (0)
     private ArrayList<String> currentInstructions;
     
     private Timer t;
@@ -34,6 +35,7 @@ class GUI extends JFrame
     {
         // Initialize components
         visited = new boolean[Puzzle.SIZE.getValue()];
+        correctPassword = 0; // Indeterminate
         step = Puzzle.START;
         main = ard;
         BtnListener btnListener = new BtnListener(); // listener for all buttons
@@ -78,7 +80,16 @@ class GUI extends JFrame
     public void sendPass(boolean isCorrect)
     {
         // Only do something if the information is sent over during the last puzzle
-        if(step==Puzzle.CIRCUIT) board.updatePassword(isCorrect);
+        if(step==Puzzle.CIRCUIT) {
+            // Check if the entered password is correct
+            if(isCorrect) {
+                correctPassword = 1;
+                nextBtn.setEnabled(true); // Allow for moving forward
+            } else correctPassword = -1;
+            
+            readInstructionFile();
+            board.updateAll();
+        }
     }
     
     // Returns the right txt file for the current step
@@ -99,22 +110,22 @@ class GUI extends JFrame
                     filePath += "OVERLAY.txt";
                     break;
                 case INK:
-                filePath += "START.txt";
+                    filePath += "INK.txt";
                     break;
                 case LIES:
-                filePath += "START.txt";
+                    filePath += "LIES.txt";
                     break;
                 case MORSE:
-                filePath += "START.txt";
+                    filePath += "MORSE.txt";
                     break;
                 case SUDOKU:
-                filePath += "START.txt";
+                    filePath += "SUDOKU.txt";
                     break;
                 case JIGSAW:
-                filePath += "START.txt";
+                    filePath += "JIGSAW.txt";
                     break;
                 case CIRCUIT:
-                filePath += "START.txt";
+                    filePath += "CIRCUIT.txt";
                     break;
                 case WIN:
                     break;
@@ -160,6 +171,8 @@ class GUI extends JFrame
                     }
                 } else step = step.next(); // Increment step
                 
+                // Always set password state to indeterminate upon entering a new step
+                correctPassword = 0;
                 // Update everything
                 readInstructionFile();
                 // If first time draw letters one by one
@@ -190,7 +203,7 @@ class GUI extends JFrame
                 repaint();
                 
                 // Do not let the user go to the "next step" if they are now at the final puzzle
-                if(step == Puzzle.CIRCUIT) nextBtn.setEnabled(false);
+                if(step == Puzzle.CIRCUIT || step == Puzzle.WIN) nextBtn.setEnabled(false);
                 prevBtn.setEnabled(true); // DO allow the user to go back
             } else if(e.getActionCommand().equals("Prev Step")) {
                 step = step.prev(); // Decrement step
@@ -244,26 +257,17 @@ class GUI extends JFrame
             }
             g2d.drawString(currentInstructions.get(instructionRow).substring(0,instructionCol),7,20+instructionRow*fontHeight); // Draw the last row up to the current col
             
-            repaint();
-        }
-        
-        public void updatePassword(boolean isCorrect)
-        {
-            updateAll();
-            
             // Set Font
-            Font font = new Font("Courier New", Font.PLAIN, 72);
+            font = new Font("Courier New", Font.PLAIN, 72);
             g2d.setFont(font);
-            
-            // Display whether password for puzzle 6 is correct
-            if(isCorrect) {
+            // Draw the Correct/Incorrect warning for the circuit puzzle based on password state
+            if(correctPassword>0) { // Correct password
                 g2d.setColor(new Color(0,255,0));
                 g2d.drawString("CORRECT", 100, 400);
-                step = step.next(); // Increment step to win screen
-            } else {
+            } else if(correctPassword<0) { // Incorrect password
                 g2d.setColor(new Color(255,0,0));
                 g2d.drawString("INCORRECT", 100, 400);
-            }
+            } // If 0 do nothing
             
             repaint();
         }

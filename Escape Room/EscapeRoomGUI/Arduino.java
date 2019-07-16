@@ -76,6 +76,8 @@ public class Arduino implements SerialPortEventListener {
             // add event listeners
             serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);
+            serialPort.disableReceiveTimeout();
+            serialPort.enableReceiveThreshold(1);
         } catch (Exception e) {
             System.err.println(e.toString());
         }
@@ -99,10 +101,14 @@ public class Arduino implements SerialPortEventListener {
         if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
             try {
                 String inputLine=input.readLine();
+                System.out.println("\""+inputLine+"\"");
                 
                 // Update window based on input from Arduino
-                if(inputLine.charAt(0) == 'y') window.sendPass(true);
-                else if(inputLine.charAt(0) == 'n') window.sendPass(false);
+                if(inputLine.equals("y")) {
+                    System.out.println("Sending YES");
+                    window.sendPass(true);
+                }
+                else if(inputLine.equals("n")) window.sendPass(false);
                 
                 // Send update
                 // window.sendIntensity(col,xpos,ypos,(int)Double.parseDouble(inputLine));
