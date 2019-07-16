@@ -28,8 +28,21 @@ class GUI extends JFrame
     private int correctPassword; // Checks if the password is correct (1), incorrect (-1), or indeterminate (0)
     private ArrayList<String> currentInstructions;
     
-    private Timer t;
     private int instructionRow,instructionCol;
+    
+    // Set up Swing timer for letter drawing
+    private Timer textScrollTimer = new Timer(40, new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+            if(instructionRow<currentInstructions.size()) {
+                board.updateAll();
+                instructionCol++;
+                if(instructionCol>currentInstructions.get(instructionRow).length()) {
+                    instructionCol = 0;
+                    instructionRow++;
+                }
+            } else textScrollTimer.stop();
+        }
+    });
     
     public GUI(Arduino ard)
     {
@@ -128,6 +141,7 @@ class GUI extends JFrame
                     filePath += "CIRCUIT.txt";
                     break;
                 case WIN:
+                    filePath += "WIN.txt";
                     break;
                 default: break;
             }
@@ -179,21 +193,7 @@ class GUI extends JFrame
                 if(!visited[step.getValue()]) {
                     instructionRow=0;
                     instructionCol=0;
-                    
-                    // Start a swing timer to draw the letters
-                    t = new Timer(40, new ActionListener() {
-                        public void actionPerformed(ActionEvent evt) {
-                            if(instructionRow<currentInstructions.size()) {
-                                board.updateAll();
-                                instructionCol++;
-                                if(instructionCol>currentInstructions.get(instructionRow).length()) {
-                                    instructionCol = 0;
-                                    instructionRow++;
-                                }
-                            } else t.stop();
-                        }
-                    });
-                    t.start();
+                    textScrollTimer.start();
                     
                     visited[step.getValue()] = true;
                 } else {
@@ -263,7 +263,7 @@ class GUI extends JFrame
             // Draw the Correct/Incorrect warning for the circuit puzzle based on password state
             if(correctPassword>0) { // Correct password
                 g2d.setColor(new Color(0,255,0));
-                g2d.drawString("CORRECT", 100, 400);
+                g2d.drawString("CORRECT", 150, 400);
             } else if(correctPassword<0) { // Incorrect password
                 g2d.setColor(new Color(255,0,0));
                 g2d.drawString("INCORRECT", 100, 400);
