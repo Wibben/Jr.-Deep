@@ -19,6 +19,8 @@ class GUI extends JFrame
 {
     private Arduino main; // Arduino connection
     
+    private SudokuHints sudokuHintUI; // Sudoku hint interface
+    
     // UI components
     private DrawArea board; // Main display area
     private JButton nextBtn,prevBtn; // Buttons
@@ -27,6 +29,7 @@ class GUI extends JFrame
     private boolean visited[];
     private int correctPassword; // Checks if the password is correct (1), incorrect (-1), or indeterminate (0)
     private ArrayList<String> currentInstructions;
+    private String morseChar;
     
     private int instructionRow,instructionCol;
     
@@ -49,8 +52,10 @@ class GUI extends JFrame
         // Initialize components
         visited = new boolean[Puzzle.SIZE.getValue()];
         correctPassword = 0; // Indeterminate
+        morseChar = " "; // Won't show up anyways
         step = Puzzle.START;
         main = ard;
+        sudokuHintUI = new SudokuHints();
         BtnListener btnListener = new BtnListener(); // listener for all buttons
         
         prevBtn = new JButton("Prev Step");
@@ -102,6 +107,15 @@ class GUI extends JFrame
             
             readInstructionFile();
             board.updateAll();
+        }
+    }
+    
+    // Receives a Morse character to display
+    public void sendMorse(String morseChar)
+    {
+        // Only do something if the information is sent over the morse code portion
+        if(step==Puzzle.MORSE) {
+            this.morseChar = morseChar;
         }
     }
     
@@ -202,6 +216,10 @@ class GUI extends JFrame
                 
                 repaint();
                 
+                // Decide whether to open sudoku hint interface or not
+                if(step == Puzzle.SUDOKU) sudokuHintUI.setActive(true);
+                else sudokuHintUI.setActive(false);
+                
                 // Do not let the user go to the "next step" if they are now at the final puzzle
                 if(step == Puzzle.CIRCUIT || step == Puzzle.WIN) nextBtn.setEnabled(false);
                 prevBtn.setEnabled(true); // DO allow the user to go back
@@ -213,6 +231,10 @@ class GUI extends JFrame
                 board.updateAll();
                 
                 repaint();
+                
+                // Decide whether to open sudoku hint interface or not
+                if(step == Puzzle.SUDOKU) sudokuHintUI.setActive(true);
+                else sudokuHintUI.setActive(false);
                 
                 // Do not let the user go to the "previous step" if they are now at the first puzzle
                 if(step == Puzzle.START) prevBtn.setEnabled(false);
@@ -260,15 +282,19 @@ class GUI extends JFrame
             // Set Font
             font = new Font("Courier New", Font.PLAIN, 72);
             g2d.setFont(font);
-            g2d.drawString("CORRECT", 150, 560);
-            // Draw the Correct/Incorrect warning for the circuit puzzle based on password state
-            if(correctPassword>0) { // Correct password
-                g2d.setColor(new Color(0,255,0));
-                g2d.drawString("CORRECT", 150, 560);
-            } else if(correctPassword<0) { // Incorrect password
-                g2d.setColor(new Color(255,0,0));
-                g2d.drawString("INCORRECT", 100, 560);
-            } // If 0 do nothing
+            // Stage specific graphics
+            if(step==Puzzle.MORSE) {
+                g2d.setColor(new Color(255,255,0));
+                g2d.drawString(morseChar, 295, 560);
+            } else if(step==Puzzle.CIRCUIT) { // Draw the Correct/Incorrect warning for the circuit puzzle based on password state
+                if(correctPassword>0) { // Correct password
+                    g2d.setColor(new Color(0,255,0));
+                    g2d.drawString("CORRECT", 150, 560);
+                } else if(correctPassword<0) { // Incorrect password
+                    g2d.setColor(new Color(255,0,0));
+                    g2d.drawString("INCORRECT", 100, 560);
+                } // If 0 do nothing
+            }
             
             repaint();
         }

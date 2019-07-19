@@ -105,6 +105,7 @@ public class Arduino implements SerialPortEventListener {
                 // Update window based on input from Arduino
                 if(inputLine.equals("y")) window.sendPass(true);
                 else if(inputLine.equals("n")) window.sendPass(false);
+                else if(inputLine.equals(".") || inputLine.equals("-") || inputLine.equals(" ")) window.sendMorse(inputLine);
                 
                 // Send update
                 // window.sendIntensity(col,xpos,ypos,(int)Double.parseDouble(inputLine));

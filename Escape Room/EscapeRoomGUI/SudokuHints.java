@@ -18,17 +18,27 @@ import java.util.ArrayList;
 class SudokuHints extends JFrame
 {
     // UI components
-    private JButton goBtn; // Button to start/stop timer
+    private JButton goBtn;
+    private JButton useHintBtn[];
     private JLabel currentTime; // Displays current time
+    private JLabel hintCount[]; // Displays hint count for each team
     
     private int time; // To store countdown
+    private int hints[] = {0,0,0,0,0}; // To store the number of hints for each team
     
     // Set up Swing timer for countdown
     private Timer threeMinuteTimer = new Timer(1000, new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
             time--;
-            currentTime.setText(time/60 + ":" + time%60);
-            if(time<0) time = 180; // Reset timer
+            // Separate into digits for time display
+            currentTime.setText(time/60 + ":" + ((time%60)/10) + "" + time%10);
+            if(time<0) { // Reset timer
+                time = 180;
+                for(int i=0; i<5; i++) {
+                    hints[i]++;
+                    hintCount[i].setText(""+hints[i]);
+                }
+            }
         }
     });
     
@@ -41,8 +51,10 @@ class SudokuHints extends JFrame
         
         goBtn = new JButton("Start");
         goBtn.addActionListener(btnListener);
+        useHintBtn = new JButton[5];
         
         // Current time display, centered
+        hintCount = new JLabel[5];
         Font font = new Font("Courier New", Font.BOLD, 72);
         currentTime = new JLabel("3:00", SwingConstants.CENTER);
         currentTime.setFont(font);
@@ -51,14 +63,34 @@ class SudokuHints extends JFrame
         JPanel content = new JPanel();        // Create a content pane
         content.setLayout(new BorderLayout(5,0)); // Use BorderLayout for panel
         JPanel center = new JPanel();
-        center.setLayout(new GridLayout(5,3)); // Grid for displaying everyone's hint count
+        center.setLayout(new GridLayout(5,3,0,5)); // Grid for displaying everyone's hint count
         
         // Tool tips
         goBtn.setToolTipText("Start Timer");
         
         // Add components to content area
-        //north.add(prevBtn);
-        //north.add(nextBtn);
+        for(int i=0; i<5; i++) {
+            center.add(new JLabel("Group " + (i+1) + " hints:"));
+            hintCount[i] = new JLabel("0", SwingConstants.CENTER);
+            center.add(hintCount[i]);
+            useHintBtn[i] = new JButton("Use Hint");
+            useHintBtn[i].setToolTipText("Use One of Group " + (i+1) + "'s Hints");
+            useHintBtn[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    // Find out which button was pressed (and subsequently be able to determine which array index to check)
+                    int group = ((JButton)e.getSource()).getToolTipText().charAt(17) - '1';
+                    // Deduct hints if required
+                    if(hints[group]>0) {
+                        hints[group]++;
+                        hintCount[group].setText(""+hints[group]);
+                    } else { // Error pop up
+                        JFrame f = new JFrame();
+                        JOptionPane.showMessageDialog(f, "Not Enough Hints","Error",JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+            center.add(useHintBtn[i]);
+        }
         
         // Input area
         content.add(goBtn, "South");
@@ -71,16 +103,20 @@ class SudokuHints extends JFrame
         setContentPane(content);
         pack();
         setTitle("Sudoku Hint Helper");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);// Center window
     }
     
     // Sets the hint GUI active
-    public void sendActive(boolean active)
+    public void setActive(boolean active)
     {
         if(active) { // Set everything and make visible
             setVisible(true);
-            time = 180; // Make sure to reset time
+            // Make sure to reset time and hints
+            time = 180; 
+            for(int i=0; i<5; i++) {
+                hints[i] = 0;
+            }
         } else { // Stop everything and make non visible
             setVisible(false);
             if(threeMinuteTimer.isRunning()) threeMinuteTimer.stop(); // Stop timer if necessary

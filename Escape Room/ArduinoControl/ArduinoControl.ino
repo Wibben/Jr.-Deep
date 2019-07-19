@@ -66,9 +66,10 @@ void playMorse(char character)
   }
 
   for(int i=0; i<morse.length(); i++) {
+    Serial.println(morse[i]);
     if(morse[i]=='.') playTone(tones[4],MorseUnit);
     else playTone(tones[5],3*MorseUnit);
-    Serial.println(morse[i]);
+    Serial.println(" "); // Print space so dots will flash
     delay(MorseUnit); // Wait a unit before playing next tone
   }
 }
