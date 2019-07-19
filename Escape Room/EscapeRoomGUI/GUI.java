@@ -84,7 +84,7 @@ class GUI extends JFrame
         // Set window attributes
         setContentPane(content);
         pack();
-        setTitle("The Great Escape");
+        setTitle("\"Escape Room\" (but really just a few puzzles)");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);// Center window
     }
@@ -260,13 +260,14 @@ class GUI extends JFrame
             // Set Font
             font = new Font("Courier New", Font.PLAIN, 72);
             g2d.setFont(font);
+            g2d.drawString("CORRECT", 150, 560);
             // Draw the Correct/Incorrect warning for the circuit puzzle based on password state
             if(correctPassword>0) { // Correct password
                 g2d.setColor(new Color(0,255,0));
-                g2d.drawString("CORRECT", 150, 400);
+                g2d.drawString("CORRECT", 150, 560);
             } else if(correctPassword<0) { // Incorrect password
                 g2d.setColor(new Color(255,0,0));
-                g2d.drawString("INCORRECT", 100, 400);
+                g2d.drawString("INCORRECT", 100, 560);
             } // If 0 do nothing
             
             repaint();

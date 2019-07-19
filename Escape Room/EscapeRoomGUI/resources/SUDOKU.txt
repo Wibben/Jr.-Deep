@@ -16,5 +16,5 @@ You guys are good to have come this far,
   that will help you in the final puzzle.
 
   Do not fret though, because you will be 
-  able to ask for a hint every 3 minutes to
-  get one of your squares revealed for you.
+  able to get a hint every 3 minutes to
+  reveal the number in one of the squares.

@@ -101,13 +101,9 @@ public class Arduino implements SerialPortEventListener {
         if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
             try {
                 String inputLine=input.readLine();
-                System.out.println("\""+inputLine+"\"");
                 
                 // Update window based on input from Arduino
-                if(inputLine.equals("y")) {
-                    System.out.println("Sending YES");
-                    window.sendPass(true);
-                }
+                if(inputLine.equals("y")) window.sendPass(true);
                 else if(inputLine.equals("n")) window.sendPass(false);
                 
                 // Send update
