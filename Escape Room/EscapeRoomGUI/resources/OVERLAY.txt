@@ -3,11 +3,9 @@ TASK I: HIDDEN OBJECTS
 
 Welcome Grade 3/4 Spy Academy,
 
-  You have completed a week of intense spy 
-  training, and you are almost ready to 
-  take on the world. But first, we need to
-  look at and evaluate the results of your 
-  training.
+  You have completed a week of spy camp,
+  and you are almost done. But first, we 
+  need to look what you've learned.
   
   Your first task is to find the hidden 
   clues scattered around the room to open 

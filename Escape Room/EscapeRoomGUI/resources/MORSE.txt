@@ -1,2 +1,17 @@
-123456789012345678901234567890123456789012
-TASK IV: MORSE CODE
+
+TASK IV: MORSE MESSAGES
+
+Nicely done Grade 3/4s,
+
+  Morse code played a vital role in World 
+  War II, carrying messages such as enemy 
+  locations between ships and naval bases.
+  
+  In this next task you will need to solve
+  some Morse code messages to reveal clues
+  that will be useful to you in solving
+  later puzzles.
+  
+  Don't worry if you feel like you're not
+  good at hearing Morse code, because it 
+  will also be flashing on the screen...

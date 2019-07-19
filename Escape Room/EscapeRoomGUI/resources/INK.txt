@@ -1,7 +1,19 @@
-123456789012345678901234567890123456789012
-TASK II: INVISIBLE INK
+
+TASK II: INVISIBLE ENCRYPTIONS
 
 Excellent job solving the first puzzle,
 
-  You have proven yourselves to be masters
-  of finding hidden objects, 
+  In this next task, you must find the 
+  secret words written in invisible ink 
+  around the room.
+  
+  Afterwards, you must bring the words to
+  an instructor to receive an encrypted
+  message, this message has been through
+  two substitution ciphers. 
+  
+  How you try to solve the ciphers is up
+  to you, but here is a hint: One of the
+  substitution ciphers is related to the 
+  way these tasks are numbered...
+  

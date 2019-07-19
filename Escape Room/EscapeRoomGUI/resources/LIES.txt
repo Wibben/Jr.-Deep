@@ -1,2 +1,16 @@
-123456789012345678901234567890123456789012
+
 TASK III: LIE DETECTION
+
+That was easy wasn't it?
+
+  In this task, all you have to do is
+  figure out the answers to the questions
+  that were asked in the decrypted message
+  from the last puzzle, and use those
+  answers to form a codeword to move onto
+  the next portion.
+  
+  You can question the instructors and
+  your mentor as much as you'd like, try
+  your best to figure out which answer is
+  the truth.

@@ -1,2 +1,20 @@
-123456789012345678901234567890123456789012
+
 TASK V: SUDOKU
+
+You guys are good to have come this far,
+
+  In this next exercise you will develop
+  your logic and reasoning skills by doing
+  a Sudoku puzzle. You must make sure that
+  in every row, column, and section of the
+  puzzle are filled with the numbers 1-9
+  without any repeats.
+  
+  You will then apply the coordinates from
+  the Morse code puzzle to the Sudoku
+  puzzle to obtain a series of numbers 
+  that will help you in the final puzzle.
+
+  Do not fret though, because you will be 
+  able to ask for a hint every 3 minutes to
+  get one of your squares revealed for you.

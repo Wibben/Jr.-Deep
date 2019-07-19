@@ -1,2 +1,19 @@
-123456789012345678901234567890123456789012
+
 TASK VII: CIRCUIT LOCK
+
+You are almost there Grade 3/4s!
+
+  In this final task, you must solve the
+  riddles that were inside of your locks
+  to obtain some numbers. These numbers
+  must then be put into the empty spaces
+  in the equation that was provided along
+  with them in the order shown by the
+  answers from the Sudoku puzzle.
+  
+  You will then plug the answers from the
+  equations into the following equation and
+  solve it. The code for the lock is the
+  answer of this equation in Binary.
+  
+  Equation: (__+__-__)/__+__ = ?
