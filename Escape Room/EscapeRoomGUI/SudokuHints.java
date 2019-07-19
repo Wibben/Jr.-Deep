@@ -81,7 +81,7 @@ class SudokuHints extends JFrame
                     int group = ((JButton)e.getSource()).getToolTipText().charAt(17) - '1';
                     // Deduct hints if required
                     if(hints[group]>0) {
-                        hints[group]++;
+                        hints[group]--;
                         hintCount[group].setText(""+hints[group]);
                     } else { // Error pop up
                         JFrame f = new JFrame();

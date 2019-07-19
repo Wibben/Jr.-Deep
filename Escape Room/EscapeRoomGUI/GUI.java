@@ -116,6 +116,8 @@ class GUI extends JFrame
         // Only do something if the information is sent over the morse code portion
         if(step==Puzzle.MORSE) {
             this.morseChar = morseChar;
+            readInstructionFile();
+            board.updateAll();
         }
     }
     
