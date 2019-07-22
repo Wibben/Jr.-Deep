@@ -5,7 +5,7 @@ Welcome Grade 3/4 Spy Academy,
 
   You have completed a week of spy camp,
   and you are almost done. But first, we 
-  need to look what you've learned.
+  need to look at what you've learned.
   
   Your first task is to find the hidden 
   clues scattered around the room to open 

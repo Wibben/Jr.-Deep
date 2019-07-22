@@ -1,6 +1,5 @@
-// The GUI for the escape room
-// Will contain instructions and a final screen indicating whether the password
-// has been successfully entered
+// The GUI for the hint system for sudoku
+// Will allow the user to use hints to help solve the sudoku puzzle
 
 import java.awt.*;
 import javax.swing.*;

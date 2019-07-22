@@ -9,11 +9,6 @@ Excellent job solving the first puzzle,
   
   Afterwards, you must bring the words to
   an instructor to receive an encrypted
-  message, this message has been through
-  two substitution ciphers. 
-  
-  How you try to solve the ciphers is up
-  to you, but here is a hint: One of the
-  substitution ciphers is related to the 
-  way these tasks are numbered...
+  message, you must decrypt the message
+  and figure out the asnwer posed on it.
   
