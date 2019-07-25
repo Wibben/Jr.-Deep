@@ -7,7 +7,7 @@ public enum Puzzle
     START,
     OVERLAY, 
     INK,
-    LIES,
+    //LIES,
     MORSE,
     SUDOKU,
     JIGSAW,

@@ -141,9 +141,9 @@ class GUI extends JFrame
                 case INK:
                     filePath += "INK.txt";
                     break;
-                case LIES:
-                    filePath += "LIES.txt";
-                    break;
+                //case LIES:
+                //    filePath += "LIES.txt";
+                //    break;
                 case MORSE:
                     filePath += "MORSE.txt";
                     break;
@@ -188,7 +188,7 @@ class GUI extends JFrame
         public void actionPerformed(ActionEvent e)
         {
             if(e.getActionCommand().equals("Next Step")) {
-                if(step == Puzzle.LIES) {
+                if(step.next() == Puzzle.MORSE) { // Verify the code for MORSE and 
                     JFrame f = new JFrame();
                     String s = (String)JOptionPane.showInputDialog(f, "Please enter the code word", "Authentication Required", JOptionPane.QUESTION_MESSAGE);
                     
@@ -199,7 +199,9 @@ class GUI extends JFrame
                     } else {
                         JOptionPane.showMessageDialog(f, "Code Word Incorrect\nYou may not proceed","Access Denied",JOptionPane.ERROR_MESSAGE);
                     }
-                } else step = step.next(); // Increment step
+                } else { // Increment step
+                    step = step.next(); 
+                }
                 
                 // Always set password state to indeterminate upon entering a new step
                 correctPassword = 0;
