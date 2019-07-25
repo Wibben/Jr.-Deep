@@ -47,6 +47,9 @@ int inputPassword[6];
 //Serial Output
 bool serialOn = true;
 
+// Take in current mode of operation from java
+int mode;
+
 // Plays a tone
 void playTone(int tone, int duration) 
 { 
@@ -117,50 +120,59 @@ void setup()
   pinMode(greenPin, OUTPUT);
   
   if (serialOn) Serial.begin(9600);
+  mode = 0;
 }
 
 void loop() 
 {
-  // Morse code circuit
-  // Play recorded message based on button pressed
-  for (int i = 0 ; i < numPins; i++) {
-    if(digitalRead(keyPins[i]) == LOW){ //if the current pin button is being pressed
-      Serial.print("GROUP");
-      Serial.println(i+1);
-      playMessage(i);
-      
-      // End of message tone
-      delay(5*MorseUnit);
-      playTone(tones[0],2000);
-    }
+  // if serial port is available, read incoming bytes
+  if (Serial.available() > 0) {
+    int temp = Serial.read();
+    if(temp==109 || temp==112) mode = temp; // 109 = 'm' = morse, 112 = p = password
+    else if(temp == 110) mode = 0; // 110 = 'n' = none
   }
 
-  // Password circuit
-  if(digitalRead(enterPin) == LOW) {
-    // Read password
-    for(int i=0; i<6; i++) {
-      inputPassword[i] = digitalRead(passwordPins[i]);
+  // Run based on current mode of operation
+  if(mode == 109) { // Morse code circuit, 'm'
+    // Play recorded message based on button pressed
+    for (int i = 0 ; i < numPins; i++) {
+      if(digitalRead(keyPins[i]) == LOW){ //if the current pin button is being pressed
+        Serial.print("GROUP");
+        Serial.println(i+1);
+        playMessage(i);
+        
+        // End of message tone
+        delay(5*MorseUnit);
+        playTone(tones[0],2000);
+      }
     }
-
-    // Check password
-    bool correct = true;
-    for(int i=0; i<6; i++) {
-      if(inputPassword[i]!=password[i]) correct = false;
+  } else if (mode == 112){ // Password circuit, 'p'
+    if(digitalRead(enterPin) == LOW) {
+      // Read password
+      for(int i=0; i<6; i++) {
+        inputPassword[i] = digitalRead(passwordPins[i]);
+      }
+  
+      // Check password
+      bool correct = true;
+      for(int i=0; i<6; i++) {
+        if(inputPassword[i]!=password[i]) correct = false;
+      }
+  
+      // Display correct output for 1 second, and ten turn it off
+      if(correct) {
+        digitalWrite(greenPin, HIGH);
+        Serial.println("y");
+      } else {
+        digitalWrite(redPin, HIGH);
+        Serial.println("n");
+      }
+      
+      delay(1000);
+      
+      digitalWrite(redPin, LOW);
+      digitalWrite(greenPin, LOW);
     }
-
-    // Display correct output for 1 second, and ten turn it off
-    if(correct) {
-      digitalWrite(greenPin, HIGH);
-      Serial.println("y");
-    } else {
-      digitalWrite(redPin, HIGH);
-      Serial.println("n");
-    }
-    
-    delay(1000);
-    
-    digitalWrite(redPin, LOW);
-    digitalWrite(greenPin, LOW);
   }
 }
 

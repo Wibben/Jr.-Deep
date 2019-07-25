@@ -199,13 +199,16 @@ class GUI extends JFrame
                     } else {
                         JOptionPane.showMessageDialog(f, "Code Word Incorrect\nYou may not proceed","Access Denied",JOptionPane.ERROR_MESSAGE);
                     }
-                } else { // Increment step
-                    step = step.next(); 
-                }
+                } else step = step.next(); // Increment step
+               
+                // Update Arduino
+                if(step == Puzzle.MORSE) main.write("m");
+                else if(step == Puzzle.CIRCUIT) main.write("p");
+                else main.write("n");
                 
                 // Always set password state to indeterminate upon entering a new step
                 correctPassword = 0;
-                // Update everything
+                // Update UI
                 readInstructionFile();
                 // If first time draw letters one by one
                 if(!visited[step.getValue()]) {
@@ -230,7 +233,12 @@ class GUI extends JFrame
             } else if(e.getActionCommand().equals("Prev Step")) {
                 step = step.prev(); // Decrement step
                 
-                // Update everything
+                // Update Arduino
+                if(step == Puzzle.MORSE) main.write("m");
+                else if(step == Puzzle.CIRCUIT) main.write("p");
+                else main.write("n");
+                
+                // Update UI
                 readInstructionFile();
                 board.updateAll();
                 
