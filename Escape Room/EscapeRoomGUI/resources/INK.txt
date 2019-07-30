@@ -10,5 +10,5 @@ Excellent job solving the first puzzle,
   Afterwards, you must bring the words to
   an instructor to receive an encrypted
   message, you must decrypt the message
-  and figure out the asnwer posed on it.
+  and figure out the answer posed on it.
   

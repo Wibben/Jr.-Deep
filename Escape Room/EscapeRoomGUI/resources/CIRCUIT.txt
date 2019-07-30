@@ -4,7 +4,7 @@ TASK VI: CIRCUIT LOCK
 You are almost there Grade 3/4s!
 
   In this final task, you must solve the
-  riddles inside of your locks to obtain
+  equation inside of your locks to obtain
   some numbers. These numbers must then be
   put into the equation in the order shown
   by the answers from the Sudoku puzzle.
@@ -14,4 +14,4 @@ You are almost there Grade 3/4s!
   solve it. The code for the lock is the
   answer of this equation in Binary.
   
-  Equation: (__+__-__)/__+__ = ?
+  Equation: __x(__-__)-__x__ = ?

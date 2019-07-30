@@ -12,4 +12,7 @@ Welcome Grade 3/4 Spy Academy,
   the first box. Figuring out how to get
   the code for the lock is up to you. 
   
+  Here's a hint for the order:
+      Black, Blue, Red
+  
   Good Luck!

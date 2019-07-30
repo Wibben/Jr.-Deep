@@ -106,7 +106,7 @@ public class Arduino implements SerialPortEventListener {
                 if(inputLine.equals("y")) window.sendPass(true);
                 else if(inputLine.equals("n")) window.sendPass(false);
                 else if(inputLine.equals(".") || inputLine.equals("-") || inputLine.equals(" ")) {
-                    System.out.println("HERE");
+                    //System.out.println("HERE");
                     window.sendMorse(inputLine);
                 }
                 
@@ -122,7 +122,7 @@ public class Arduino implements SerialPortEventListener {
     // Write to arduino
     public void write(String data)
     {
-        // To turn on the Arduino send in 'y'
+        // Send the data as bytes
         try {
             output.write(data.getBytes());
         } catch (Exception e) {
