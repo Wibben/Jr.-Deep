@@ -29,7 +29,7 @@ class GUI extends JFrame
     private boolean visited[];
     private int correctPassword; // Checks if the password is correct (1), incorrect (-1), or indeterminate (0)
     private ArrayList<String> currentInstructions;
-    private String morseChar;
+    private String morseCode;
     
     private int instructionRow,instructionCol;
     
@@ -52,7 +52,7 @@ class GUI extends JFrame
         // Initialize components
         visited = new boolean[Puzzle.SIZE.getValue()];
         correctPassword = 0; // Indeterminate
-        morseChar = " "; // Won't show up anyways
+        morseCode = ""; // Won't show up anyways
         step = Puzzle.START;
         main = ard;
         sudokuHintUI = new SudokuHints();
@@ -115,7 +115,8 @@ class GUI extends JFrame
     {
         // Only do something if the information is sent over the morse code portion
         if(step==Puzzle.MORSE) {
-            this.morseChar = morseChar;
+            if(morseChar.equals(" ")) morseCode = "";
+            else morseCode += morseChar;
             readInstructionFile();
             board.updateAll();
         }
@@ -297,7 +298,7 @@ class GUI extends JFrame
             // Stage specific graphics
             if(step==Puzzle.MORSE) {
                 g2d.setColor(new Color(255,255,0));
-                g2d.drawString(morseChar, 295, 560);
+                g2d.drawString(morseCode, 305-(morseCode.length()*20), 560); // Center Morse code
             } else if(step==Puzzle.CIRCUIT) { // Draw the Correct/Incorrect warning for the circuit puzzle based on password state
                 if(correctPassword>0) { // Correct password
                     g2d.setColor(new Color(0,255,0));

@@ -77,9 +77,10 @@ void playMorse(char character)
     Serial.println(morse[i]);
     if(morse[i]=='.') playTone(tones[4],MorseUnit);
     else playTone(tones[5],3*MorseUnit);
-    Serial.println(" "); // Print space so dots will flash
+    //Serial.println(" "); // Print space so dots will flash
     delay(MorseUnit); // Wait a unit before playing next tone
   }
+  Serial.println(" "); // Print space to reset current Morse character on GUI
 }
 
 // Plays a selected message
