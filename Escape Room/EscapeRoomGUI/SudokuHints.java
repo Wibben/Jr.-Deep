@@ -87,13 +87,18 @@ class SudokuHints extends JFrame
                 public void actionPerformed(ActionEvent e) {
                     // Find out which button was pressed (and subsequently be able to determine which array index to check)
                     int group = ((JButton)e.getSource()).getToolTipText().charAt(17) - '1';
-                    // Deduct hints if required
+                    
+                    // Open the hints interface for the selected group
+                    openHintInterface(group);
+                    /*
+                    // Open the hints interface if there are enough hints
                     if(hints[group]>0) {
                         hints[group]--;
                         hintCount[group].setText(""+hints[group]);
                     } else { // Error pop up
                         JOptionPane.showMessageDialog(currentFrame, "Not Enough Hints","Error",JOptionPane.ERROR_MESSAGE);
                     }
+                    */
                 }
             });
             center.add(useHintBtn[i]);
@@ -111,7 +116,7 @@ class SudokuHints extends JFrame
         pack();
         setTitle("Sudoku Hint Helper");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        setLocationRelativeTo(null);// Center window
+        setLocationRelativeTo(null); // Center window
     }
     
     // Sets the hint GUI active
@@ -144,5 +149,58 @@ class SudokuHints extends JFrame
                 threeMinuteTimer.stop();
             }
         }
+    }
+    
+    // Hints interface for specific groups
+    private void openHintInterface(int group)
+    {
+        // Hint interface JFrame, groups are from 1-5 but stored in array indices 0-4 so must add 1
+        JFrame hintInterface = new JFrame("Group " + (group+1) + "'s Sudoku");
+        
+        // Components
+        JLabel hintCount = new JLabel("Group " + (group+1) + "'s Hints: " + hints[group]);
+        
+        // Create content panes and set layouts
+        JPanel content = new JPanel();
+        content.setLayout(new BorderLayout(5,0));
+        JPanel center = new JPanel();
+        center.setLayout(new GridLayout(9,9,0,0));
+        
+        // Add buttons to center area
+        for(int i=1; i<=9; i++) {
+            for(int j=1; j<=9; j++) {
+                JButton square = new JButton(" "); // Blank JButton
+                square.setToolTipText("Row " + i + " Col " + j);
+                square.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        // Find out which button was pressed (and subsequently be able to determine which array index to check)
+                        int row = ((JButton)e.getSource()).getToolTipText().charAt(4) - '1';
+                        int col = ((JButton)e.getSource()).getToolTipText().charAt(10) - '1';
+                        
+                        // Reveal the square if there are enough hints
+                        if(hints[group]>0) {
+                            hints[group]--;
+                            
+                            hintCount.setText("Group " + (group+1) + "'s Hints: " + hints[group]);
+                        } else { // Error pop up
+                            JOptionPane.showMessageDialog(hintInterface, "Not Enough Hints","Error",JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                });
+                center.add(square);
+            }
+        }
+        
+        // Output Area
+        content.add(hintCount,"North");
+        content.add(center,"Center");
+        content.setBorder(BorderFactory.createEmptyBorder(0,5,5,5));
+        
+        // Set window attributes
+        hintInterface.setContentPane(content);
+        hintInterface.pack();
+        hintInterface.setVisible(true);
+        hintInterface.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        hintInterface.setLocationRelativeTo(currentFrame); // Center window on hints frame
     }
 }
