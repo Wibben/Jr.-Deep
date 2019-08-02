@@ -22,6 +22,7 @@ class GUI extends JFrame
     private SudokuHints sudokuHintUI; // Sudoku hint interface
     
     // UI components
+    private JFrame currentFrame; // Reference to GUI JFrame
     private DrawArea board; // Main display area
     private JButton nextBtn,prevBtn; // Buttons
 
@@ -50,6 +51,8 @@ class GUI extends JFrame
     public GUI(Arduino ard)
     {
         // Initialize components
+        currentFrame = this;
+        
         visited = new boolean[Puzzle.SIZE.getValue()];
         correctPassword = 0; // Indeterminate
         morseCode = ""; // Won't show up anyways
@@ -189,16 +192,15 @@ class GUI extends JFrame
         public void actionPerformed(ActionEvent e)
         {
             if(e.getActionCommand().equals("Next Step")) {
-                if(step.next() == Puzzle.MORSE) { // Verify the code for MORSE and 
-                    JFrame f = new JFrame();
-                    String s = (String)JOptionPane.showInputDialog(f, "Please enter the code word", "Authentication Required", JOptionPane.QUESTION_MESSAGE);
+                if(step.next() == Puzzle.MORSE) { // Verify the code for MORSE
+                    String s = (String)JOptionPane.showInputDialog(currentFrame, "Please enter the code word", "Authentication Required", JOptionPane.QUESTION_MESSAGE);
                     
                     // Check if the code word is correct
                     if ((s != null) && (s.length() >= 5) && s.equals("MORSE")) {
-                        JOptionPane.showMessageDialog(f, "Code Word Correct\nYou may proceed","Access Granted",JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(currentFrame, "Code Word Correct\nYou may proceed","Access Granted",JOptionPane.INFORMATION_MESSAGE);
                         step = step.next(); // Increment step
                     } else {
-                        JOptionPane.showMessageDialog(f, "Code Word Incorrect\nYou may not proceed","Access Denied",JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(currentFrame, "Code Word Incorrect\nYou may not proceed","Access Denied",JOptionPane.ERROR_MESSAGE);
                     }
                 } else step = step.next(); // Increment step
                
@@ -225,8 +227,10 @@ class GUI extends JFrame
                 repaint();
                 
                 // Decide whether to open sudoku hint interface or not
-                if(step == Puzzle.SUDOKU) sudokuHintUI.setActive(true);
-                else sudokuHintUI.setActive(false);
+                if(step == Puzzle.SUDOKU) {
+                    sudokuHintUI.setActive(true);
+                    sudokuHintUI.setLocationRelativeTo(currentFrame);
+                } else sudokuHintUI.setActive(false);
                 
                 // Do not let the user go to the "next step" if they are now at the final puzzle
                 if(step == Puzzle.CIRCUIT || step == Puzzle.WIN) nextBtn.setEnabled(false);
@@ -246,8 +250,10 @@ class GUI extends JFrame
                 repaint();
                 
                 // Decide whether to open sudoku hint interface or not
-                if(step == Puzzle.SUDOKU) sudokuHintUI.setActive(true);
-                else sudokuHintUI.setActive(false);
+                if(step == Puzzle.SUDOKU) {
+                    sudokuHintUI.setActive(true);
+                    sudokuHintUI.setLocationRelativeTo(currentFrame);
+                } else sudokuHintUI.setActive(false);
                 
                 // Do not let the user go to the "previous step" if they are now at the first puzzle
                 if(step == Puzzle.START) prevBtn.setEnabled(false);

@@ -122,11 +122,13 @@ public class Arduino implements SerialPortEventListener {
     // Write to arduino
     public void write(String data)
     {
-        // Send the data as bytes
-        try {
-            output.write(data.getBytes());
-        } catch (Exception e) {
-            System.err.println(e.toString());
+        // Send the data as bytes only if port is open
+        if(serialPort != null) {
+            try {
+                output.write(data.getBytes());
+            } catch (Exception e) {
+                System.err.println(e.toString());
+            }
         }
     }
 

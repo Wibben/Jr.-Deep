@@ -26,6 +26,8 @@ class SudokuHints extends JFrame
     private int hints[] = {0,0,0,0,0}; // To store the number of hints for each team
     private Sudoku puzzles[]; // To store the sudoku puzzles
     
+    private JFrame currentFrame; // Reference to SudokuHints JFrame
+    
     // Set up Swing timer for countdown
     private Timer threeMinuteTimer = new Timer(1000, new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
@@ -45,6 +47,8 @@ class SudokuHints extends JFrame
     public SudokuHints()
     {
         // Initialize components
+        currentFrame = this;
+        
         time = 180; // Countdown for 3 minutes
         puzzles = new Sudoku[5];
         for(int i=1; i<=5; i++) {
@@ -88,8 +92,7 @@ class SudokuHints extends JFrame
                         hints[group]--;
                         hintCount[group].setText(""+hints[group]);
                     } else { // Error pop up
-                        JFrame f = new JFrame();
-                        JOptionPane.showMessageDialog(f, "Not Enough Hints","Error",JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(currentFrame, "Not Enough Hints","Error",JOptionPane.ERROR_MESSAGE);
                     }
                 }
             });
