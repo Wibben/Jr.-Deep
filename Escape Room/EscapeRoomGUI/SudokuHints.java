@@ -24,6 +24,7 @@ class SudokuHints extends JFrame
     
     private int time; // To store countdown
     private int hints[] = {0,0,0,0,0}; // To store the number of hints for each team
+    private Sudoku puzzles[]; // To store the sudoku puzzles
     
     // Set up Swing timer for countdown
     private Timer threeMinuteTimer = new Timer(1000, new ActionListener() {
@@ -45,6 +46,10 @@ class SudokuHints extends JFrame
     {
         // Initialize components
         time = 180; // Countdown for 3 minutes
+        puzzles = new Sudoku[5];
+        for(int i=1; i<=5; i++) {
+            puzzles[i-1] = new Sudoku("resources\\SUDOKU-"+i+".txt");
+        }
         
         BtnListener btnListener = new BtnListener(); // listener for all buttons
         
