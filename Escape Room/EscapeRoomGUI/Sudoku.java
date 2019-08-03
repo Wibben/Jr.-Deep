@@ -8,7 +8,9 @@ import java.io.*; // File I/O
 public class Sudoku
 {
     // Holds puzzle - 0 indicates an empty square
-    private int[][] puzzle;
+    public int[][] puzzle,solution;
+    
+    private boolean solved; // Flag for whether the puzzle has been solved
 
     // Loads an empty sudoku puzzle
     public Sudoku()
@@ -62,12 +64,24 @@ public class Sudoku
     // Solves a puzzle, calls the recursive sudoku solve function
     public void solve()
     {
+        // Copy over the puzzle and begin to solve
+        solution = new int[9][9];
+        for(int i=0; i<9; i++) {
+            for(int j=0; j<9; j++) {
+                solution[i][j] = puzzle[i][j];
+            }
+        }
+        
+        solved = false;
+        
         solve(0,0);
     }
     
     // Recursively solves a sudoku puzzle using a brute force method
     private void solve(int r, int c)
     {
+        if(solved) return; // DO nothing if puzzle has been solved
+        
         // Rows go from 0 to 8, so when row = 9, all squares have been filled
         // and a validity check is required
         if(r==9) {
@@ -77,30 +91,34 @@ public class Sudoku
             boolean okay = true;
     
             for(int i=0; i<9; i++) {
-                if(rowtaken[puzzle[8][i]]) okay = false;
-                rowtaken[puzzle[8][i]] = true;
+                if(rowtaken[solution[8][i]]) okay = false;
+                rowtaken[solution[8][i]] = true;
             }
             for(int i=0; i<9; i++) {
-                if(coltaken[puzzle[i][8]]) okay = false;
-                coltaken[puzzle[i][8]] = true;
+                if(coltaken[solution[i][8]]) okay = false;
+                coltaken[solution[i][8]] = true;
             }
             for(int i=6; i<9; i++) {
                 for(int j=6; j<9; j++) {
-                    if(boxtaken[puzzle[i][j]]) okay = false;
-                    boxtaken[puzzle[i][j]] = true;
+                    if(boxtaken[solution[i][j]]) okay = false;
+                    boxtaken[solution[i][j]] = true;
                 }
             }
-    
-            // Prints the board if it's okay
+            
+            // Sets solved flag if puzzle is valid
+            if(okay) solved = true;
+            /*
+            // Prints the board if it's okay, used for debugging purposes
             if(okay) {
                 for(int i=0; i<9; i++) {
                     for(int j=0; j<9; j++)
-                        System.out.print(puzzle[i][j] + " ");
+                        System.out.print(solution[i][j] + " ");
                     System.out.println();
                 }
                 System.out.println();
             }
-        } else if(puzzle[r][c]==0) { // 0 indicates an empty box, so must fill it in
+            */
+        } else if(solution[r][c]==0) { // 0 indicates an empty box, so must fill it in
             boolean avail[] = new boolean[]{true,true,true,true,true,true,true,true,true,true};
             int rblock,cblock;
             
@@ -108,38 +126,44 @@ public class Sudoku
             // rblock and cblock holds the top left corner of the current block
             rblock = (r/3) * 3;
             cblock = (c/3) * 3;
-            //
-            /*
-            if(r<3) rblock = 0;
-            else if(r<6) rblock = 3;
-            else rblock = 6;
-    
-            if(c<3) cblock = 0;
-            else if(c<6) cblock = 3;
-            else cblock = 6;
-            */
+            
             // Figure out which numbers are currently available
             for(int i=0; i<9; i++)
-                if(puzzle[i][c]!=0) avail[puzzle[i][c]] = false;
+                if(solution[i][c]!=0) avail[solution[i][c]] = false;
             for(int i=0; i<9; i++)
-                if(puzzle[r][i]!=0) avail[puzzle[r][i]] = false;
+                if(solution[r][i]!=0) avail[solution[r][i]] = false;
             for(int i=rblock; i<rblock+3; i++)
                 for(int j=cblock; j<cblock+3; j++)
-                    if(puzzle[i][j]!=0) avail[puzzle[i][j]] = false;
+                    if(solution[i][j]!=0) avail[solution[i][j]] = false;
     
             // Try all available numbers (until solution is found)
             for(int i=1; i<10; i++) {
-                if(avail[i]) {
-                    puzzle[r][c] = i;
+                if(avail[i] && !solved) {
+                    solution[r][c] = i;
     
                     if(c==8) solve(r+1,0);
                     else solve(r,c+1);
-                    puzzle[r][c] = 0;
+                    
+                    if(!solved) solution[r][c] = 0;
                 }
             }
         } else { // Square has been filled as part of the puzzle, move on to next one
             if(c==8) solve(r+1,0);
             else solve(r,c+1);
         }
+    }
+    
+    // Getters for private members
+    public int getPuzzleSquare(int row, int col) 
+    {
+        return puzzle[row][col];
+    }
+    
+    // Reveals the value of one of the puzzle's squares
+    public int revealPuzzleSquare(int row, int col)
+    {
+        // Edit the actual puzzle square with the solution
+        puzzle[row][col] = solution[row][col];
+        return puzzle[row][col];
     }
 }

@@ -34,7 +34,7 @@ class SudokuHints extends JFrame
             time--;
             // Separate into digits for time display
             currentTime.setText(time/60 + ":" + ((time%60)/10) + "" + time%10);
-            if(time<0) { // Reset timer
+            if(time<1) { // Reset timer
                 time = 180;
                 for(int i=0; i<5; i++) {
                     hints[i]++;
@@ -90,15 +90,6 @@ class SudokuHints extends JFrame
                     
                     // Open the hints interface for the selected group
                     openHintInterface(group);
-                    /*
-                    // Open the hints interface if there are enough hints
-                    if(hints[group]>0) {
-                        hints[group]--;
-                        hintCount[group].setText(""+hints[group]);
-                    } else { // Error pop up
-                        JOptionPane.showMessageDialog(currentFrame, "Not Enough Hints","Error",JOptionPane.ERROR_MESSAGE);
-                    }
-                    */
                 }
             });
             center.add(useHintBtn[i]);
@@ -164,30 +155,48 @@ class SudokuHints extends JFrame
         JPanel content = new JPanel();
         content.setLayout(new BorderLayout(5,0));
         JPanel center = new JPanel();
-        center.setLayout(new GridLayout(9,9,0,0));
+        center.setLayout(new GridLayout(3,3,3,3));
         
         // Add buttons to center area
-        for(int i=1; i<=9; i++) {
-            for(int j=1; j<=9; j++) {
-                JButton square = new JButton(" "); // Blank JButton
-                square.setToolTipText("Row " + i + " Col " + j);
-                square.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        // Find out which button was pressed (and subsequently be able to determine which array index to check)
-                        int row = ((JButton)e.getSource()).getToolTipText().charAt(4) - '1';
-                        int col = ((JButton)e.getSource()).getToolTipText().charAt(10) - '1';
-                        
-                        // Reveal the square if there are enough hints
-                        if(hints[group]>0) {
-                            hints[group]--;
-                            
-                            hintCount.setText("Group " + (group+1) + "'s Hints: " + hints[group]);
-                        } else { // Error pop up
-                            JOptionPane.showMessageDialog(hintInterface, "Not Enough Hints","Error",JOptionPane.ERROR_MESSAGE);
+        for(int i=0; i<3; i++) {
+            for(int j=0; j<3; j++) {
+                // Set each block
+                JPanel block = new JPanel();
+                block.setLayout(new GridLayout(3,3,0,0));
+                for(int k=0; k<3; k++) {
+                    for(int l=0; l<3; l++) {
+                        JButton square = new JButton(""+puzzles[group].getPuzzleSquare(i*3+k,j*3+l));
+                        square.setPreferredSize(new Dimension(45,45));
+                        if(square.getText().equals("0")) { // Enable the blank buttons and make text blank instead of 0
+                            square.setText("");
                         }
+                        
+                        square.setToolTipText("Row " + (i*3+k+1) + " Col " + (j*3+l+1));
+                        square.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                // Find out which button was pressed (and subsequently be able to determine which array index to check)
+                                int row = ((JButton)e.getSource()).getToolTipText().charAt(4) - '1';
+                                int col = ((JButton)e.getSource()).getToolTipText().charAt(10) - '1';
+                                
+                                // Reveal the square if there are enough hints
+                                if(hints[group]>0) {
+                                    // Only deduct hints if the square has not been revealed yet
+                                    if(((JButton)e.getSource()).getText().equals("")) {
+                                        hints[group]--;
+                                        hintCount.setText("Group " + (group+1) + "'s Hints: " + hints[group]);
+                                        // Update and reveal square
+                                        square.setText(""+puzzles[group].revealPuzzleSquare(row,col));
+                                    }
+                                } else { // Error pop up
+                                    JOptionPane.showMessageDialog(hintInterface, "Not Enough Hints","Error",JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        });
+                        block.add(square);
                     }
-                });
-                center.add(square);
+                }
+                // Add block to actual panel
+                center.add(block);
             }
         }
         
