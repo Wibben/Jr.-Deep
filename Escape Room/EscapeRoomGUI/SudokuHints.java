@@ -118,7 +118,7 @@ class SudokuHints extends JFrame
             // Make sure to reset time and hints
             time = 180; 
             for(int i=0; i<5; i++) {
-                hints[i] = 0;
+                hints[i] = 10;
             }
         } else { // Stop everything and make non visible
             setVisible(false);
@@ -149,7 +149,7 @@ class SudokuHints extends JFrame
         JFrame hintInterface = new JFrame("Group " + (group+1) + "'s Sudoku");
         
         // Components
-        JLabel hintCount = new JLabel("Group " + (group+1) + "'s Hints: " + hints[group]);
+        JLabel interfaceHintCount = new JLabel("Group " + (group+1) + "'s Hints: " + hints[group]);
         
         // Create content panes and set layouts
         JPanel content = new JPanel();
@@ -183,7 +183,8 @@ class SudokuHints extends JFrame
                                     // Only deduct hints if the square has not been revealed yet
                                     if(((JButton)e.getSource()).getText().equals("")) {
                                         hints[group]--;
-                                        hintCount.setText("Group " + (group+1) + "'s Hints: " + hints[group]);
+                                        interfaceHintCount.setText("Group " + (group+1) + "'s Hints: " + hints[group]);
+                                        hintCount[group].setText(""+hints[group]);
                                         // Update and reveal square
                                         square.setText(""+puzzles[group].revealPuzzleSquare(row,col));
                                     }
@@ -201,7 +202,7 @@ class SudokuHints extends JFrame
         }
         
         // Output Area
-        content.add(hintCount,"North");
+        content.add(interfaceHintCount,"North");
         content.add(center,"Center");
         content.setBorder(BorderFactory.createEmptyBorder(0,5,5,5));
         
