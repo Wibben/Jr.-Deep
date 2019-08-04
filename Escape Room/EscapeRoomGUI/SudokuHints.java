@@ -21,6 +21,7 @@ class SudokuHints extends JFrame
     private JButton useHintBtn[];
     private JLabel currentTime; // Displays current time
     private JLabel hintCount[]; // Displays hint count for each team
+    private JLabel interfaceHintCount[];
     
     private int time; // To store countdown
     private int hints[] = {0,0,0,0,0}; // To store the number of hints for each team
@@ -39,6 +40,7 @@ class SudokuHints extends JFrame
                 for(int i=0; i<5; i++) {
                     hints[i]++;
                     hintCount[i].setText(""+hints[i]);
+                    interfaceHintCount[i].setText(""+hints[i]);
                 }
             }
         }
@@ -63,6 +65,7 @@ class SudokuHints extends JFrame
         
         // Current time display, centered
         hintCount = new JLabel[5];
+        interfaceHintCount = new JLabel[5];
         Font font = new Font("Courier New", Font.BOLD, 72);
         currentTime = new JLabel("3:00", SwingConstants.CENTER);
         currentTime.setFont(font);
@@ -79,7 +82,8 @@ class SudokuHints extends JFrame
         // Add components to content area
         for(int i=0; i<5; i++) {
             center.add(new JLabel("Group " + (i+1) + " hints:"));
-            hintCount[i] = new JLabel("0", SwingConstants.CENTER);
+            hintCount[i] = new JLabel(""+hints[i], SwingConstants.CENTER);
+            interfaceHintCount[i] = new JLabel(""+hints[i]);
             center.add(hintCount[i]);
             useHintBtn[i] = new JButton("Use Hint");
             useHintBtn[i].setToolTipText("Use One of Group " + (i+1) + "'s Hints");
@@ -118,7 +122,9 @@ class SudokuHints extends JFrame
             // Make sure to reset time and hints
             time = 180; 
             for(int i=0; i<5; i++) {
-                hints[i] = 10;
+                hints[i] = 0;
+                hintCount[i].setText(""+hints[i]);
+                interfaceHintCount[i].setText(""+hints[i]);
             }
         } else { // Stop everything and make non visible
             setVisible(false);
@@ -145,17 +151,20 @@ class SudokuHints extends JFrame
     // Hints interface for specific groups
     private void openHintInterface(int group)
     {
+        // Disable Use Hint button so user won't open 2 of the same hint interfaces
+        useHintBtn[group].setEnabled(false);
+        
         // Hint interface JFrame, groups are from 1-5 but stored in array indices 0-4 so must add 1
         JFrame hintInterface = new JFrame("Group " + (group+1) + "'s Sudoku");
-        
-        // Components
-        JLabel interfaceHintCount = new JLabel("Group " + (group+1) + "'s Hints: " + hints[group]);
         
         // Create content panes and set layouts
         JPanel content = new JPanel();
         content.setLayout(new BorderLayout(5,0));
+        JPanel north = new JPanel();
+        north.setLayout(new FlowLayout());
         JPanel center = new JPanel();
-        center.setLayout(new GridLayout(3,3,3,3));
+        center.setLayout(new GridLayout(3,3,1,1));
+        center.setBackground(Color.BLACK);
         
         // Add buttons to center area
         for(int i=0; i<3; i++) {
@@ -166,12 +175,15 @@ class SudokuHints extends JFrame
                 for(int k=0; k<3; k++) {
                     for(int l=0; l<3; l++) {
                         JButton square = new JButton(""+puzzles[group].getPuzzleSquare(i*3+k,j*3+l));
-                        square.setPreferredSize(new Dimension(45,45));
                         if(square.getText().equals("0")) { // Enable the blank buttons and make text blank instead of 0
                             square.setText("");
                         }
                         
                         square.setToolTipText("Row " + (i*3+k+1) + " Col " + (j*3+l+1));
+                        square.setPreferredSize(new Dimension(30,30));
+                        square.setBackground(Color.WHITE);
+                        square.setBorder(new LineBorder(Color.BLACK));
+                        square.setMargin(new Insets(0,0,0,0));
                         square.addActionListener(new ActionListener() {
                             public void actionPerformed(ActionEvent e) {
                                 // Find out which button was pressed (and subsequently be able to determine which array index to check)
@@ -183,8 +195,8 @@ class SudokuHints extends JFrame
                                     // Only deduct hints if the square has not been revealed yet
                                     if(((JButton)e.getSource()).getText().equals("")) {
                                         hints[group]--;
-                                        interfaceHintCount.setText("Group " + (group+1) + "'s Hints: " + hints[group]);
                                         hintCount[group].setText(""+hints[group]);
+                                        interfaceHintCount[group].setText(""+hints[group]);
                                         // Update and reveal square
                                         square.setText(""+puzzles[group].revealPuzzleSquare(row,col));
                                     }
@@ -202,7 +214,9 @@ class SudokuHints extends JFrame
         }
         
         // Output Area
-        content.add(interfaceHintCount,"North");
+        north.add(new JLabel("Group " + (group+1) + "'s Hints: "));
+        north.add(interfaceHintCount[group]);
+        content.add(north,"North");
         content.add(center,"Center");
         content.setBorder(BorderFactory.createEmptyBorder(0,5,5,5));
         
@@ -212,5 +226,14 @@ class SudokuHints extends JFrame
         hintInterface.setVisible(true);
         hintInterface.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         hintInterface.setLocationRelativeTo(currentFrame); // Center window on hints frame
+        hintInterface.setResizable(false);
+        
+        // Re-enable the Use Hint Button on close/dispose
+        hintInterface.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                useHintBtn[group].setEnabled(true);
+            }
+        });
     }
 }
