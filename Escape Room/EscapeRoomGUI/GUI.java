@@ -4,14 +4,9 @@
 
 import java.awt.*;
 import javax.swing.*;
-import java.awt.geom.*; // Rotating text
 import java.awt.image.*; // BufferedImage
 import java.awt.event.*;  // Needed for ActionListener
-import javax.swing.event.*;  // Needed for ActionListener
-import javax.swing.text.*;
-import javax.swing.border.*;
 import javax.swing.Timer;
-import javax.imageio.*; // Allows exporting to a png
 import java.io.*; // File I/O
 import java.util.ArrayList;
 

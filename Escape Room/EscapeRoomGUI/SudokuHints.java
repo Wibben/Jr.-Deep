@@ -3,16 +3,10 @@
 
 import java.awt.*;
 import javax.swing.*;
-import java.awt.geom.*; // Rotating text
-import java.awt.image.*; // BufferedImage
 import java.awt.event.*;  // Needed for ActionListener
-import javax.swing.event.*;  // Needed for ActionListener
-import javax.swing.text.*;
 import javax.swing.border.*;
 import javax.swing.Timer;
-import javax.imageio.*; // Allows exporting to a png
 import java.io.*; // File I/O
-import java.util.ArrayList;
 
 class SudokuHints extends JFrame
 {
@@ -190,18 +184,18 @@ class SudokuHints extends JFrame
                                 int row = ((JButton)e.getSource()).getToolTipText().charAt(4) - '1';
                                 int col = ((JButton)e.getSource()).getToolTipText().charAt(10) - '1';
                                 
-                                // Reveal the square if there are enough hints
-                                if(hints[group]>0) {
-                                    // Only deduct hints if the square has not been revealed yet
-                                    if(((JButton)e.getSource()).getText().equals("")) {
+                                // Only deduct hints if the square has not been revealed yet
+                                if(((JButton)e.getSource()).getText().equals("")) {
+                                    // Check if the user has a hint to use
+                                    if(hints[group]>0) {
                                         hints[group]--;
                                         hintCount[group].setText(""+hints[group]);
                                         interfaceHintCount[group].setText(""+hints[group]);
                                         // Update and reveal square
                                         square.setText(""+puzzles[group].revealPuzzleSquare(row,col));
+                                    }else { // Error pop up
+                                        JOptionPane.showMessageDialog(hintInterface, "Not Enough Hints","Error",JOptionPane.ERROR_MESSAGE);
                                     }
-                                } else { // Error pop up
-                                    JOptionPane.showMessageDialog(hintInterface, "Not Enough Hints","Error",JOptionPane.ERROR_MESSAGE);
                                 }
                             }
                         });
