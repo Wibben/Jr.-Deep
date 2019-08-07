@@ -123,6 +123,15 @@ class SudokuHints extends JFrame
         } else { // Stop everything and make non visible
             setVisible(false);
             if(threeMinuteTimer.isRunning()) threeMinuteTimer.stop(); // Stop timer if necessary
+            // Close all open hint interfaces and re-enable all disabled buttons
+            for(Frame f : Frame.getFrames()) {
+                if(f.getTitle().substring(0,5).equals("Group")) {
+                    f.dispose();
+                }
+            }
+            for(int i=0; i<5; i++) {
+                useHintBtn[i].setEnabled(true);
+            }
         }
     }
     
